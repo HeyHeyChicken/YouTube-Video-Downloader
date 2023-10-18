@@ -1,0 +1,12 @@
+{
+  "name": "apple_tv_youtube",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "Antoine Duval",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "ytdl-core": "^4.11.5"
+  }
+}
