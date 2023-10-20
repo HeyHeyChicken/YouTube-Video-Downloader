@@ -1,14 +1,9 @@
 <div align="center">
 
-<img src="https://github.com/HeyHeyChicken/NOVA/blob/master/resources/github-logo.svg" alt="NOVA" width="300">
+<img src="https://github.com/HeyHeyChicken/NOVA/blob/master/resources/github-logo.svg" alt="YouTube Video Downloader" width="300">
 
 **YouTube Video Downloader** is a customizable personal assistant made with Node.js.<br>
 <br>
-</div>
-<div align="center">
-<img width="820px" src="https://github.com/HeyHeyChicken/NOVA/blob/master/resources/screenshot.jpg">
-<img width="410px" src="https://raw.githubusercontent.com/HeyHeyChicken/NOVA-Server/master/resources/screenshot.jpg">
-<img width="410px" src="https://raw.githubusercontent.com/HeyHeyChicken/NOVA-Client/master/resources/screenshot.jpg">
 </div>
 
 <br>
@@ -18,19 +13,9 @@
 **NOVA** is an open-source personal assistant that you can host on your server.<br/>
 You can communicate with it orally or in writing, most of his skills are designed to work offline to protect your privacy.
 
-## ☁️ Try with a Single-Click
-
-Gitpod will automatically setup an environment and run an instance for you.
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/HeyHeyChicken/NOVA)
-
-❗ The server and client pages will not open automatically, click the " <img width="20" src="https://raw.githubusercontent.com/HeyHeyChicken/NOVA/master/resources/GitPodPortIcon.png" /> Remote Explorer " button (on the left side panel), then the " <img width="20" src="https://raw.githubusercontent.com/HeyHeyChicken/NOVA/master/resources/GitPodOpenBrowserIcon.png" /> Open Browser " button for ports "8080" and "8083".
-
 ## 🔧 Prerequisites
 
 [<img src="https://raw.githubusercontent.com/HeyHeyChicken/NOVA/master/resources/nodeJSLogo.png" width="18" /> Node.js](https://nodejs.org/)<br/>
-[<img src="https://raw.githubusercontent.com/HeyHeyChicken/NOVA/master/resources/npmLogo.png" width="18" /> npm](https://npmjs.com/)<br/>
-[<img src="https://raw.githubusercontent.com/HeyHeyChicken/NOVA/master/resources/gitLogo.png" width="18" /> Git](https://git-scm.com/)<br/>
 
 ## ⬇️ Installation
 
@@ -65,28 +50,9 @@ When you install NOVA, no features are installed. You need to add them.<br/>
 3) Find skills you want, open the modal and click on the "Install" button.<br/>
    The server and clients will restarts, and the skill will be installed.
 
-## 🫵 Support and contribution
-
-I provide support for all users through [GitHub issues](//github.com/HeyHeyChicken/NOVA/issues).
-
-If you would like to contribute to this project, make sure you first read the [guide for contributors](//github.com/HeyHeyChicken/NOVA/blob/master/CONTRIBUTING.md).
-
-## ⭐ Stars
-
-Thank you to everyone who has and who will starred this project.
-[![Stargazers repo roster for @HeyHeyChicken/NOVA](https://reporoster.com/stars/HeyHeyChicken/NOVA)](https://github.com/HeyHeyChicken/NOVA/stargazers)
-
 ## 💻 Compatibility
 
-NOVA has only been officially tested on Mac, Linux and Raspberry Pi 4.
-
-## 📦 A great case
-
-Hey, I made a case for my NOVA hosted in a Raspberry PI 4.<br/>
-You can find the SketchUp plan in NOVA/resources/NOVA_SketchUp_Case.skp.<br/><br/>
-<img height="200px" src="https://raw.githubusercontent.com/HeyHeyChicken/NOVA/master/resources/NOVA_SketchUp_Case.gif">
-<img height="200px" src="https://raw.githubusercontent.com/HeyHeyChicken/NOVA/master/resources/NOVA_Case_Without.jpeg">
-<img height="200px" src="https://raw.githubusercontent.com/HeyHeyChicken/NOVA/master/resources/NOVA_Case.jpeg">
+NOVA has only been officially tested on Windows.
 
 <br>
 <br>
