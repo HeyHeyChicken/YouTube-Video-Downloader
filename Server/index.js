@@ -2,10 +2,15 @@ const fs = require('fs');
 const path = require('path');
 const ytdl = require('ytdl-core'); // https://github.com/fent/node-ytdl-core
 const express = require("express");
-var myffmpeg = require('fluent-ffmpeg');
+const https = require('https');
 
+const LIBRARIES = {
+    FS: require("fs"),
+    NodeCMD: require("node-cmd"),
+    Path: require("path"),
+};
 
-// https://www.youtube.com/watch?v=ECCWM6MUe0o
+const MAX_RESOLUTION = 1080;
 
 const directory = __dirname + "/public";
 fs.readdir(directory, (err, files) => {
@@ -32,20 +37,23 @@ app.use("/", express.static(directory));
 
 app.get("/read", (request, response) => {
     if(request.query.url){
-        const FILE_NAME = new Date().getTime();
-        downloadVideo(FILE_NAME, request.query.url, () => {
-            console.log("Video is downloaded");
-            downloadAudio(FILE_NAME, request.query.url, () => {
-                console.log("Audio is downloaded");
-                mergeAudioAndVideo("./public/" + FILE_NAME + ".mp4", "./public/" + FILE_NAME + ".mp3", "./public/" + FILE_NAME + "_FINAL.mp4");
-                console.log("Video and audio are merged");
-
-                response.redirect('/' + FILE_NAME + ".mp4");
-                /*
-                setTimeout(() => {
-                    fs.unlinkSync(PATH);
-                }, infos.videoDetails.lengthSeconds * 2 * 1000);
-                */
+        removeOldFiles();
+        const STEP_1 = new Date().getTime();
+        console.log("Downloading a new video...");
+        console.log("[URL] " + request.query.url);
+        downloadVideo(STEP_1, request.query.url, (VIDEO_PATH) => {
+            const STEP_2 = new Date().getTime();
+            console.log("Video is downloaded (" + ((STEP_2 - STEP_1) / 1000) + " s)");
+            downloadAudio(STEP_1, request.query.url, (AUDIO_PATH, infos) => {
+                const STEP_3 = new Date().getTime();
+                console.log("Audio is downloaded (" + ((STEP_3 - STEP_2) / 1000) + " s)");
+                const FINAL_FILE_PATH = "/" + STEP_1 + "_" + infos.videoDetails.lengthSeconds + "_FINAL.mp4";
+                mergeAudioAndVideo(VIDEO_PATH, AUDIO_PATH, "./public" + FINAL_FILE_PATH, () => {
+                    const STEP_4 = new Date().getTime();
+                    console.log("Video and audio are merged (" + ((STEP_4 - STEP_3) / 1000) + " s)");
+                    console.log("TOTAL = " + ((STEP_4 - STEP_1) / 1000) + " s");
+                    response.redirect(FINAL_FILE_PATH);
+                });
            });
         });
     }
@@ -58,28 +66,60 @@ app.listen(PORT, () => {
     console.log("Server Listening on PORT:", PORT);
 });
 
-function mergeAudioAndVideo(video, audio, output) {
-    myffmpeg()
-        .addInput(video)
-        .addInput(audio)
-        .addOptions(['-map 0:v', '-map 1:a', '-c:v copy'])
-        .format('mp4')
-        .on('error', error => console.log(error))
-        .on('end', () => {
-            console.log(' finished !');
-        })
-        .saveToFile(output)
+function removeOldFiles() {
+    const NOM = new Date().getTime();
+    const DIRECTORY = __dirname + "/public";
+    fs.readdir(DIRECTORY, (err, files) => {
+        if (err){
+            throw err;
+        }
+
+        for (const FILE of files) {
+            if(!FILE.endsWith('.md')){
+                if(FILE.endsWith('_FINAL.mp4')){
+                    const SPLIT = FILE.split("_");
+                    const ELLAPSED = (NOM - parseInt(SPLIT[0]) / 1000);
+                    if(ELLAPSED >= parseInt(SPLIT[1]) * 2){
+                        fs.unlink(path.join(DIRECTORY, FILE), (err) => {
+                            if (err){
+                                throw err;
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    });
+}
+
+function mergeAudioAndVideo(video, audio, output, callback) {
+    const FFMPEG_ABSOLUTE_PATH = path.resolve(__dirname, "ffmpeg", "windows", "bin", "ffmpeg.exe");
+    const CONVERT_COMMAND =   FFMPEG_ABSOLUTE_PATH + " -i " + video + " -i " + audio + " -c copy " + output;
+    LIBRARIES.NodeCMD.run(
+        CONVERT_COMMAND,
+        function(err, data, stderr){
+            // ON SUPPRIME lES ANCIEN FICHIERS
+            LIBRARIES.FS.unlink(video, function(){
+                LIBRARIES.FS.unlink(audio, function(){
+                    callback();
+                });
+            });
+        }
+    );
 }
 
 // Cette fonction télécharge la pardie audio.
 function downloadAudio(file_name, url, callback){
     ytdl.getInfo(url).then((infos) => {
-        const FILE_NAME = file_name + ".mp3";
-        let my_format = ytdl.chooseFormat(infos.formats, { filter: "audioonly" });
-        console.log(my_format);
+        const FILE_NAME = file_name + "_" + infos.videoDetails.lengthSeconds + ".mp3";
+        let formats = infos.formats.filter(x => x.hasAudio && !x.hasVideo);
+        if(formats.some((format) => format.displayName)){
+            formats = formats.filter(x => x.audioTrack.displayName.includes("French"));
+        }
+        formats = getMinAudiosBitrate(formats);
         const PATH = "./public/" + FILE_NAME;
-        ytdl(url, { filter: format => format.itag === my_format.itag }).pipe(fs.createWriteStream(PATH)).on('finish', function () {
-            callback();
+        ytdl(url, { filter: format => format.url == formats[0].url }).pipe(fs.createWriteStream(PATH)).on('finish', function () {
+            callback(PATH, infos);
         });
     }, (error) => {
         console.error(error);
@@ -89,11 +129,12 @@ function downloadAudio(file_name, url, callback){
 // Cette fonction télécharge la pardie vidéo.
 function downloadVideo(file_name, url, callback){
     ytdl.getInfo(url).then((infos) => {
-        const FILE_NAME = file_name + ".mp4";
-        let my_format = ytdl.chooseFormat(infos.formats, { quality: getMaxVideosByFPS(getMaxVideosByResolution(infos.formats.filter(x => x.hasVideo)))[0].itag + "" });
+        console.log("[TITLE] " + infos.videoDetails.title);
+        const FILE_NAME = file_name + "_" + infos.videoDetails.lengthSeconds + ".mp4";
+        let my_format = getMaxVideosByFPS(getMinVideosBitrate(getMaxVideosByResolution(infos.formats.filter(x => x.hasVideo))))[0];
         const PATH = "./public/" + FILE_NAME;
-        ytdl(url, { filter: format => format.itag === my_format.itag }).pipe(fs.createWriteStream(PATH)).on('finish', function () {
-            callback();
+        ytdl(url, { filter: format => format.url == my_format.url }).pipe(fs.createWriteStream(PATH)).on('finish', function () {
+            callback(PATH);
         });
     }, (error) => {
         console.error(error);
@@ -104,11 +145,24 @@ function downloadVideo(file_name, url, callback){
 function getMaxVideosByResolution(formats){
     let max = 0;
     formats.forEach(format => {
-        if(format.height > max){
+        if(format.height > max && format.height <= MAX_RESOLUTION){
             max = format.height;
         }
     });
-    return formats.filter(x => x.height == max);
+    const BACK = formats.filter(x => x.height == max);
+    return BACK;
+}
+
+// Cette fonction retourne la liste des vidéos avec la plus haute résolution
+function getMinVideosBitrate(formats){
+    let min = formats[0].bitrate;
+    formats.forEach(format => {
+        if(format.bitrate < min){
+            min = format.bitrate;
+        }
+    });
+    const BACK = formats.filter(x => x.bitrate == min);
+    return BACK;
 }
 
 // Cette fonction retourne la liste des vidéos avec le plus haut FPS
@@ -120,4 +174,16 @@ function getMaxVideosByFPS(formats){
         }
     });
     return formats.filter(x => x.fps == max);
+}
+
+// Cette fonction retourne la liste des vidéos avec la plus haute résolution
+function getMinAudiosBitrate(formats){
+    let min = formats[0].audioBitrate;
+    formats.forEach(format => {
+        if(format.audioBitrate < min){
+            min = format.audioBitrate;
+        }
+    });
+    const BACK = formats.filter(x => x.audioBitrate == min);
+    return BACK;
 }
