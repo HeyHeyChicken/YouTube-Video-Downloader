@@ -6,8 +6,6 @@
 <br>
 </div>
 
-<br>
-
 ## 👋 Introduction
 
 **YouTube Video Downloader** is an open-source tool that allows you to download YouTube videos.<br/>
@@ -36,7 +34,7 @@ npm install
 ```
 node index.js
 ```
-2) If you start the launcher for the first time, it will ask you if you want to launch a client or/and a server.<br/>
+2) Open your browser at the following address: http://localhost:3000/read?url=https://www.youtube.com/watch?v=ECCWM6MUe0o<br/>
    If you need to change it in the future, you'll have to edit the "/settings.json".
 
 ## 💻 Compatibility

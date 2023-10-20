@@ -6,23 +6,8 @@ const https = require('https');
 const { platform } = require('node:process');
 const NODE_CMD = require("node-cmd");
 
-let ffmpegAbsolutePath = "";
-switch(platform){
-    case "win32":
-        ffmpegAbsolutePath = PATH.resolve(__dirname, "ffmpeg", "windows", "bin", "ffmpeg.exe");
-        break;
-    case "aix":
-    case "darwin":
-    case "freebsd":
-    case "linux":
-    case "openbsd":
-    case "sunos":
-    case "android":
-        ffmpegAbsolutePath = PATH.resolve(__dirname, "ffmpeg", "macos", "ffmpeg");
-        break;
-}
-
-const MAX_RESOLUTION = 1080;
+const FFMPEG_ABSOLUTE_PATH = setFfmpegPath();
+const SETTINGS = JSON.parse(FS.readFileSync(PATH.join(__dirname, "settings.json"), 'utf8'));
 
 const directory = __dirname + "/public";
 FS.readdir(directory, (err, files) => {
@@ -43,7 +28,7 @@ FS.readdir(directory, (err, files) => {
 
 const app = express ();
 app.use(express.json());
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || SETTINGS.port;
 
 app.use("/", express.static(directory));
 
@@ -75,7 +60,7 @@ app.get("/read", (request, response) => {
 });
 
 app.listen(PORT, () => {
-    console.log("Server Listening on PORT:", PORT);
+    console.log("Server listening on port:", PORT);
 });
 
 function removeOldFiles() {
@@ -104,8 +89,24 @@ function removeOldFiles() {
     });
 }
 
+function setFfmpegPath() {
+    switch(platform){
+        case "win32":
+            return PATH.resolve(__dirname, "ffmpeg", "windows", "bin", "ffmpeg.exe");
+        case "aix":
+        case "darwin":
+        case "freebsd":
+        case "linux":
+        case "openbsd":
+        case "sunos":
+        case "android":
+            return PATH.resolve(__dirname, "ffmpeg", "macos", "ffmpeg");
+    }
+    return "";
+}
+
 function mergeAudioAndVideo(video, audio, output, callback) {
-    const CONVERT_COMMAND =   ffmpegAbsolutePath + " -i " + video + " -i " + audio + " -c copy " + output;
+    const CONVERT_COMMAND =   FFMPEG_ABSOLUTE_PATH + " -i " + video + " -i " + audio + " -c copy " + output;
     NODE_CMD.run(
         CONVERT_COMMAND,
         function(err, data, stderr){
@@ -125,7 +126,7 @@ function downloadAudio(file_name, url, callback){
         const FILE_NAME = file_name + "_" + infos.videoDetails.lengthSeconds + ".mp3";
         let formats = infos.formats.filter(x => x.hasAudio && !x.hasVideo);
         if(formats.some((format) => format.displayName)){
-            formats = formats.filter(x => x.audioTrack.displayName.includes("French"));
+            formats = formats.filter(x => x.audioTrack.displayName.includes(SETTINGS.language));
         }
         formats = getMinAudiosBitrate(formats);
         const PATH = "./public/" + FILE_NAME;
@@ -156,7 +157,7 @@ function downloadVideo(file_name, url, callback){
 function getMaxVideosByResolution(formats){
     let max = 0;
     formats.forEach(format => {
-        if(format.height > max && format.height <= MAX_RESOLUTION){
+        if(format.height > max && format.height <= SETTINGS.maxResolution){
             max = format.height;
         }
     });
