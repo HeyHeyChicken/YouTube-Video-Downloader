@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://github.com/HeyHeyChicken/NOVA/blob/master/resources/github-logo.svg" alt="YouTube Video Downloader" width="300">
+<img src="https://raw.githubusercontent.com/HeyHeyChicken/YouTube-Video-Downloader/main/resources/logo.jpg" alt="YouTube Video Downloader" width="300">
 
 **YouTube Video Downloader** is a customizable personal assistant made with Node.js.<br>
 <br>
@@ -15,7 +15,7 @@ You can communicate with it orally or in writing, most of his skills are designe
 
 ## 🔧 Prerequisites
 
-[<img src="https://raw.githubusercontent.com/HeyHeyChicken/NOVA/master/resources/nodeJSLogo.png" width="18" /> Node.js](https://nodejs.org/)<br/>
+[<img src="https://raw.githubusercontent.com/HeyHeyChicken/YouTube-Video-Downloader/main/resources/nodeJSLogo.png" width="18" /> Node.js](https://nodejs.org/)<br/>
 
 ## ⬇️ Installation
 
