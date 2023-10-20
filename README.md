@@ -34,7 +34,7 @@ npm install
 ```
 node index.js
 ```
-2) Open your browser at the following address:
+2) Open your browser at the following address:<br/>
    http://localhost:3000/read?url=https://www.youtube.com/watch?v=ECCWM6MUe0o<br/>
    If you need to change settings in the future, you'll have to edit the "/settings.json".
 
