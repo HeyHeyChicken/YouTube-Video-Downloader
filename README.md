@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/HeyHeyChicken/YouTube-Video-Downloader/main/resources/logo.jpg" alt="YouTube Video Downloader" width="300">
 
-**YouTube Video Downloader** is a customizable personal assistant made with Node.js.<br>
+**YouTube Video Downloader** is a tool that allows you to download YouTube videos made with Node.js.<br>
 <br>
 </div>
 
@@ -10,8 +10,7 @@
 
 ## 👋 Introduction
 
-**NOVA** is an open-source personal assistant that you can host on your server.<br/>
-You can communicate with it orally or in writing, most of his skills are designed to work offline to protect your privacy.
+**YouTube Video Downloader** is an open-source tool that allows you to download YouTube videos.<br/>
 
 ## 🔧 Prerequisites
 
@@ -21,7 +20,7 @@ You can communicate with it orally or in writing, most of his skills are designe
 
 1) Clone it directly from GitHub.
 ```
-git clone https://github.com/HeyHeyChicken/NOVA.git
+git clone https://github.com/HeyHeyChicken/YouTube-Video-Downloader.git
 ```
 2) Install packages
 ```
@@ -42,17 +41,9 @@ node index.js
 
 If you want more detailed explanations, you will find them on the [Wiki](//github.com/HeyHeyChicken/NOVA/wiki).
 
-## 💼 Features
-
-When you install NOVA, no features are installed. You need to add them.<br/>
-1) Go to your NOVA's server UI (the default URL is "http://localhost:8080/")
-2) Go to the "Skills" tab.
-3) Find skills you want, open the modal and click on the "Install" button.<br/>
-   The server and clients will restarts, and the skill will be installed.
-
 ## 💻 Compatibility
 
-NOVA has only been officially tested on Windows.
+YouTube Video Downloader has only been officially tested on Windows.
 
 <br>
 <br>
