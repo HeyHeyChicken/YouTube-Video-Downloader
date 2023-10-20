@@ -24,7 +24,7 @@ git clone https://github.com/HeyHeyChicken/YouTube-Video-Downloader.git
 ```
 2) Install packages
 ```
-cd NOVA
+cd YouTube-Video-Downloader
 ```
 ```
 npm install
@@ -38,8 +38,6 @@ node index.js
 ```
 2) If you start the launcher for the first time, it will ask you if you want to launch a client or/and a server.<br/>
    If you need to change it in the future, you'll have to edit the "/settings.json".
-
-If you want more detailed explanations, you will find them on the [Wiki](//github.com/HeyHeyChicken/NOVA/wiki).
 
 ## 💻 Compatibility
 
